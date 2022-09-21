@@ -10,13 +10,14 @@ export class UserController {
 
     @Post()
     @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true, }))
-    async createUser(@Body() user: UserDTO): Promise<User> {
+    async createUser(@Body() user: UserDTO, @Res() res: Response): Promise<any> {
         const exists = await this.userService.getUser(user.loginId);
 
         if (exists) {
             throw new BadRequestException('이미 존재하는 사용자입니다.');
         } else {
-            return await this.userService.addUser(user);
+            await this.userService.addUser(user);
+            res.redirect('/login.html');
         }
     }
 

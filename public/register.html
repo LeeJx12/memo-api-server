@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>회원가입</title>
+    </head>
+    <body>
+        <form action="/user" method="POST" onError="onMessage(e)">
+            ID: <input type="text" name="loginId" placeholder="ID" />
+            password: <input type="password" name="password" placeholder="password" />
+            이름: <input type="text" name="userName" />
+            <button type="submit">회원가입</button>
+        </form>
+        <script>
+            function onMessage(err) {
+                alert(`${err.statusCode}\n${err.message}\n${err.error}`);
+            }
+        </script>
+    </body>
+</html>

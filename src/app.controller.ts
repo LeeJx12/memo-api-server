@@ -8,7 +8,12 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  index(@Res() res: Response,  @Session() session: { user?: User }): void {
+  index(@Res() res: Response, @Session() session: { user?: User }): void {
     this.appService.gateway(res, session);
+  }
+
+  @Get('/register')
+  register(@Res() res: Response): void {
+    res.redirect('/register.html');
   }
 }

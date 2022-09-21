@@ -20,7 +20,9 @@ export class UserController {
     }
 
     @Get('/:userId')
-    async getUser(@Param() params: { [key: string]: string }): Promise<User> {
+    async getUser(@Param() params: { [key: string]: string }, @Session() session: { user?: User }): Promise<User> {
+        if (params.userId === 'session') return this.getSessionUser(session);
+        
         const user = await this.userService.getUserByUserId(params.userId);
 
         if (!user) {

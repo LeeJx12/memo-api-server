@@ -47,6 +47,5 @@ export class UserService {
             session.endSession();
             console.error(e);
         }
-        
     }
 }

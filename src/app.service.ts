@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Response } from 'express';
+import { User } from './user/user.schema';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return process.env.MONGO_URL + 'heelo';
+  gateway(res: Response, session: { user?: User }): void {
+    const nextPage = session.user ? '/main.html' : '/login.html';
+
+    res.redirect(nextPage);
   }
 }

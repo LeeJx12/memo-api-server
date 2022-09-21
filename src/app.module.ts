@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { MemoModule } from './memo/memo.module';
 import { SessionModule } from 'nestjs-session';
 import { CommentModule } from './comment/comment.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { CommentModule } from './comment/comment.module';
         session: { secret: configService.get<string>('SESSION_KEY') }
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/',
+      rootPath: join(__dirname, '..', 'public'),
     }),
     UserModule,
     MemoModule,

@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Post, Get, Param, UsePipes, ValidationPipe, Session } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Get, Param, UsePipes, ValidationPipe, Session, Res } from '@nestjs/common';
 import { User, UserDTO } from './user.schema';
 import { UserService } from './user.service';
 import * as md5 from 'md5';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -31,7 +32,7 @@ export class UserController {
     }
 
     @Post('/login')
-    async login(@Body() user: User, @Session() session: { user?: User }): Promise<User> {
+    async login(@Body() user: User, @Session() session: { user?: User }, @Res() res: Response): Promise<void> {
         const exists = await this.userService.getUser(user.loginId);
 
         if (!exists) {
@@ -43,7 +44,7 @@ export class UserController {
                 throw new BadRequestException('비밀번호가 틀렸습니다!');
             } else {
                 session.user = exists;
-                return exists;
+                res.redirect('/main.html');
             }
         }
     }

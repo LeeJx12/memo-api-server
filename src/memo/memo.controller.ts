@@ -56,13 +56,15 @@ export class MemoController {
         }
 
         const orgMemo = await this.memoService.getMemo(params.memoId);
+        orgMemo.title = memo.title;
+        orgMemo.memo = memo.memo;
 
         if (!orgMemo) {
             throw new BadRequestException('메모가 존재하지 않습니다!');
         } else if (orgMemo.userId !== session.user.userId.toString()) {
             throw new BadRequestException('작성자만 수정할 수 있습니다!');
         } else {
-            const newMemo = await this.memoService.editMemo(memo);
+            const newMemo = await this.memoService.editMemo(orgMemo);
 
             return newMemo;
         }

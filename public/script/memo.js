@@ -10,7 +10,7 @@ function search(pageId, listCnt) {
                             <h5 class="mb-1 text-truncate">${memo.title}</h5>
                             <small>${timeForToday(memo.createdAt)}</small>
                         </div>
-                        <p class="mb-1">${memo.memo}</p>
+                        <p class="mb-1 text-truncate">${memo.memo}</p>
                         <small>${memo.writerName}</small>
                     </a>
                 `;
@@ -23,13 +23,42 @@ function search(pageId, listCnt) {
             if (memoList.length === 0) {
                 ul.append(htmlToElement(`<div class="m-auto my-5"><h4>등록된 메모가 없습니다.</h4></div>`))
             }
+
+            return memoList.length > 0;
         })
+        .then(showPagination)
 }
 
 function showPagination(isShow) {
     const nav = document.querySelector("#pagination");
+    const ul = nav.querySelector("ul.pagination");
+    ul.innerHTML = '';
     if (isShow) {
-        nav.classList.contains('d-none') && nav.classList.remove('d-none');
+        fetchToAPI(`/memo/list/cnt`)
+            .then(totalCnt => {
+                const totalPage = Math.ceil(totalCnt / _listCnt);
+
+                if (1 === totalPage) {
+                    !nav.classList.contains('d-none') && nav.classList.add('d-none');
+                    return;
+                }
+
+                if (_pageId - 2 >= 1) {
+                    ul.append(htmlToElement(`<li class="page-item"><a class="page-link" href="#" onClick="return false;" data-id="${_pageId-2}">Prev</a></li>`));
+                }
+                if (_pageId - 1 >= 1) {
+                    ul.append(htmlToElement(`<li class="page-item"><a class="page-link" href="#" onClick="return false;" data-id="${_pageId-1}">${_pageId-1}</a></li>`));
+                }
+                ul.append(htmlToElement(`<li class="page-item active"><a class="page-link" href="#" onClick="return false;" data-id="${_pageId}">${_pageId}</a></li>`));
+                if (_pageId + 1 <= totalPage) {
+                    ul.append(htmlToElement(`<li class="page-item"><a class="page-link" href="#" onClick="return false;" data-id="${_pageId+1}">${_pageId+1}</a></li>`));
+                }
+                if (_pageId + 2 <= totalPage) {
+                    ul.append(htmlToElement(`<li class="page-item"><a class="page-link" href="#" onClick="return false;" data-id="${_pageId+2}">Next/a></li>`));
+                }
+
+                nav.classList.contains('d-none') && nav.classList.remove('d-none');
+            });
     } else {
         !nav.classList.contains('d-none') && nav.classList.add('d-none');
     }
@@ -82,5 +111,8 @@ function viewMemo(memoId) {
             document.querySelector("#editModal #memoId").value = memo.memoId;
             document.querySelector("#editModal #title").value = memo.title;
             document.querySelector("#editModal #memo").value = memo.memo;
+
+            return memoId;
         })
+        .then(listComment);
 }

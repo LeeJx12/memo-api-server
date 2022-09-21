@@ -57,6 +57,7 @@ function init() {
     getSessionUser()
         .then(() => {
             search(_pageId, _listCnt);
+            document.querySelector("#pagination ul.pagination").addEventListener('click', pageEventHandler);
         })
 }
 
@@ -73,4 +74,14 @@ function htmlToElement(html) {
         template.innerHTML = html.trim();
         return template.firstChild;
     }
+}
+
+function pageEventHandler(e) {
+    const nextPageId = Number(e.srcElement.getAttribute("data-id"));
+
+    if (_pageId !== nextPageId) {
+        _pageId = nextPageId;
+        search(_pageId, _listCnt);
+    }
+
 }

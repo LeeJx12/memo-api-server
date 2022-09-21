@@ -29,6 +29,11 @@ export class MemoController {
         }
     }
 
+    @Get('/list/cnt')
+    async getTotalCount(): Promise<number> {
+        return await this.memoService.getTotalCount();
+    }
+
     @Get('/list/:pageId/:listCnt')
     async listMemo(@Param() params: {[key: string]: number}, @Session() session: {user?: User}): Promise<Array<Memo>> {
         if (!session.user) {

@@ -18,7 +18,8 @@ export class MemoController {
 
         memo.memoId = uuid();
         memo.userId = session.user.userId.toString();
-            
+        memo.writerName = session.user.userName;
+
         return await this.memoService.addMemo(memo);
     }
 

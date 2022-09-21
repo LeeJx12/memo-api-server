@@ -81,4 +81,8 @@ export class MemoService {
             console.error(e);
         }
     }
+
+    async getTotalCount(): Promise<number> {
+        return await this.memoModel.count();
+    }
 }

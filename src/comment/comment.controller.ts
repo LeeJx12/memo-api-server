@@ -46,13 +46,16 @@ export class CommentController {
         }
 
         const orgComment = await this.commentService.getComment(params.commentId);
+        orgComment.comment = comment.comment;
+        orgComment.userId = session.user.userId.toString();
+        orgComment.writerName = session.user.userName;
 
         if (!orgComment) {
             throw new BadRequestException('댓글이 존재하지 않습니다!');
         } else if (orgComment.userId !== session.user.userId.toString()) {
             throw new BadRequestException('작성자만 수정할 수 있습니다!');
         } else {
-            const newComment = await this.commentService.editComment(comment);
+            const newComment = await this.commentService.editComment(orgComment);
 
             return newComment;
         }

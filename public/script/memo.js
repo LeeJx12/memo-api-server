@@ -1,15 +1,21 @@
-function init() {
-    search(_pageId, _listCnt);
-}
-
 function search(pageId, listCnt) {
     fetchToAPI(`/memo/list/${pageId}/${listCnt}`, 'GET')
         .then(memoList => {
-            const ul = document.querySelector(".list ul");
+            const ul = document.querySelector(".list-group");
             ul.innerHTML = '';
             memoList.forEach(memo => {
-                const li = document.createElement("li");
-                li.innerHTML = `${memo.title} ${memo.memo} ${memo.userId} ${timeForToday(memo.createdAt)}`;
+                const html = `
+                    <a href="#" class="list-group-item list-group-item-action" aria-current="true" onClick="return false;">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${memo.title}</h5>
+                            <small>${timeForToday(memo.createdAt)}</small>
+                        </div>
+                        <p class="mb-1">${memo.memo}</p>
+                        <small>${memo.userId}</small>
+                    </a>
+                `;
+
+                const li = htmlToElement(html);
                 li.addEventListener('click', e => viewMemo(memo.memoId));
                 ul.append(li);
             })

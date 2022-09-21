@@ -34,3 +34,43 @@ function fetchToAPI(uri, method, params) {
         .catch(reject);
     });
 }
+
+function getSessionUser() {
+    return new Promise((resolve, reject) => {
+        fetchToAPI('/user/session', 'GET')
+            .then(user => {
+                if (user.status && user.status === 400) {
+                    location.href = '/login.html';
+                    return;
+                }
+                document.querySelector("#sessionUser").innerHTML = user.userName;
+            })
+            .then(resolve)
+            .catch(e => {
+                location.href = '/login.html';
+                reject(e);
+            });
+    })
+}
+
+function init() {
+    getSessionUser()
+        .then(() => {
+            search(_pageId, _listCnt);
+        })
+}
+
+function htmlToElement(html) {
+    if (undefined === html || '' === html) {
+        return;
+    }
+    let template = document.createElement("template");
+    if (('content' in template)) {
+        template.innerHTML = html.trim();
+        return template.content.firstChild;
+    } else {
+        template = document.createElement("div");
+        template.innerHTML = html.trim();
+        return template.firstChild;
+    }
+}

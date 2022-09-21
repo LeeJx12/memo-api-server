@@ -7,11 +7,11 @@ function search(pageId, listCnt) {
                 const html = `
                     <a href="#" class="list-group-item list-group-item-action" aria-current="true" onClick="return false;">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${memo.title}</h5>
+                            <h5 class="mb-1 text-truncate">${memo.title}</h5>
                             <small>${timeForToday(memo.createdAt)}</small>
                         </div>
                         <p class="mb-1">${memo.memo}</p>
-                        <small>${memo.userId}</small>
+                        <small>${memo.writerName}</small>
                     </a>
                 `;
 
@@ -21,9 +21,18 @@ function search(pageId, listCnt) {
             });
 
             if (memoList.length === 0) {
-                ul.append(htmlToElement(`<h4>등록된 메모가 없습니다.</h4>`))
+                ul.append(htmlToElement(`<div class="m-auto my-5"><h4>등록된 메모가 없습니다.</h4></div>`))
             }
         })
+}
+
+function showPagination(isShow) {
+    const nav = document.querySelector("#pagination");
+    if (isShow) {
+        nav.classList.contains('d-none') && nav.classList.remove('d-none');
+    } else {
+        !nav.classList.contains('d-none') && nav.classList.add('d-none');
+    }
 }
 
 function saveMemo() {
@@ -42,27 +51,36 @@ function saveMemo() {
 
 function editMemo() {
     const params = {
-        memoId: document.querySelector(".edit #memoId").value,
-        title: document.querySelector(".edit #title").value,
-        memo: document.querySelector(".edit #memo").value,
-        userId: document.querySelector(".edit #userId").value
+        memoId: document.querySelector("#editModal #memoId").value,
+        title: document.querySelector("#editModal #title").value,
+        memo: document.querySelector("#editModal #memo").value
     };
     fetchToAPI(`/memo/${params.memoId}`, 'PUT', params)
-        .then(() => search(_pageId, _listCnt));
+        .then(() => search(_pageId, _listCnt))
+        .then(() => document.querySelector("#closeEditModal").click());
 }
 
-function deleteMemo(memoId) {
+function deleteMemo() {
+    const memoId = document.querySelector("#viewModal #memoId").value;
+
     fetchToAPI(`/memo/${memoId}`, 'DELETE')
-        .then(() => search(_pageId, _listCnt));
+        .then(() => search(_pageId, _listCnt))
+        .then(() => document.querySelector("#closeViewModal").click());
 }
 
 function viewMemo(memoId) {
     fetchToAPI(`/memo/${memoId}`, 'GET')
         .then(memo => {
-            document.querySelector(".view").innerHTML = JSON.stringify(memo);
-            document.querySelector(".edit #memoId").value = memo.memoId;
-            document.querySelector(".edit #userId").value = memo.userId;
-            document.querySelector(".edit #title").value = memo.title;
-            document.querySelector(".edit #memo").value = memo.memo;
+            document.querySelector("#viewModalButton").click();
+            document.querySelector("#viewModalLabel").innerHTML = memo.title;
+            document.querySelector("#viewModal #memoId").value = memo.memoId;
+            document.querySelector("#viewModal #memo").innerHTML = memo.memo;
+            document.querySelector("#viewModal #writerName").innerHTML = memo.writerName;
+            document.querySelector("#viewModal #createdAt").innerHTML = memo.createdAt;
+            document.querySelector("#viewModal #updatedAt").innerHTML = memo.updatedAt;
+
+            document.querySelector("#editModal #memoId").value = memo.memoId;
+            document.querySelector("#editModal #title").value = memo.title;
+            document.querySelector("#editModal #memo").value = memo.memo;
         })
 }

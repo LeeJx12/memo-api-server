@@ -15,8 +15,7 @@ export class CommentService {
     listComment(memoId: string): Promise<Array<Comment>> {
         return new Promise((resolve, reject) => {
             this.commentModel
-                .find()
-                .select({memoId})
+                .find({memoId: memoId})
                 .sort({createdAt: 'asc'})
                 .then(resolve)
                 .catch(reject);

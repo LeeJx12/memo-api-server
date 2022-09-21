@@ -3,8 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
+import { SessionModule } from 'nestjs-session';
 
 @Module({
   imports: [
@@ -15,6 +15,13 @@ import { UserModule } from './user/user.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URL'),
+      }),
+      inject: [ConfigService],
+    }),
+    SessionModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        session: { secret: configService.get<string>('SESSION_KEY') }
       }),
       inject: [ConfigService],
     }),

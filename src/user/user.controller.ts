@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Get, Param, UsePipes, ValidationPipe, Session } from '@nestjs/common';
 import { User, UserDTO } from './user.schema';
 import { UserService } from './user.service';
 import * as md5 from 'md5';
@@ -31,7 +31,7 @@ export class UserController {
     }
 
     @Post('/login')
-    async login(@Body() user: User): Promise<User> {
+    async login(@Body() user: User, @Session() session: { user?: User }): Promise<User> {
         const exists = await this.userService.getUser(user.loginId);
 
         if (!exists) {
@@ -42,6 +42,7 @@ export class UserController {
             if (exists.password !== encrypt) {
                 throw new BadRequestException('비밀번호가 틀렸습니다!');
             } else {
+                session.user = exists;
                 return exists;
             }
         }

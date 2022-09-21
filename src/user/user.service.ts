@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User, UserDTO } from './user.schema';
 import * as md5 from 'md5';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+    constructor(@InjectModel(User.name) private userModel: Model<User>, @InjectConnection() private connection: mongoose.Connection) {}
     
     async getUser(loginId: string): Promise<any> {
         try {
@@ -15,7 +15,7 @@ export class UserService {
 
             return result;
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
 
@@ -25,13 +25,28 @@ export class UserService {
 
             return result;
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
 
     async addUser(user: UserDTO): Promise<User> {
-        user.userId = uuid();
-        user.password = md5(user.password);
-        return await this.userModel.create(user);
+        const session = await this.connection.startSession();
+
+        try {
+            user.userId = uuid();
+            user.password = md5(user.password);
+
+            session.startTransaction();
+            const response = await this.userModel.create(user);
+            await session.commitTransaction();
+            session.endSession();
+
+            return response;
+        } catch (e) {
+            await session.abortTransaction();
+            session.endSession();
+            console.error(e);
+        }
+        
     }
 }

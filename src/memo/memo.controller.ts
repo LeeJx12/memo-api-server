@@ -46,6 +46,8 @@ export class MemoController {
 
         if (!orgMemo) {
             throw new BadRequestException('메모가 존재하지 않습니다!');
+        } else if (orgMemo.userId !== memo.userId) {
+            throw new BadRequestException('작성자만 수정할 수 있습니다!');
         } else {
             const newMemo = await this.memoService.editMemo(memo);
 
@@ -53,12 +55,14 @@ export class MemoController {
         }
     }
 
-    @Delete('/:memoId')
+    @Delete('/:memoId/:userId')
     async deleteMemo(@Param() params: { [key: string]: string }) {
         const memo = await this.memoService.getMemo(params.memoId);
 
         if (!memo) {
             throw new BadRequestException('메모가 존재하지 않습니다!');
+        } else if (params.userId !== memo.userId) {
+            throw new BadRequestException('작성자만 삭제할 수 있습니다!');
         } else {
             return await this.memoService.delMemo(memo);
         }

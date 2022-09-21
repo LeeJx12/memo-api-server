@@ -27,6 +27,10 @@ export class Memo extends Document {
     @IsString()
     @IsNotEmpty()
     userId: string;
+
+    @Prop()
+    @IsString()
+    writerName: string;
 }
 
 export class MemoDTO {
@@ -41,6 +45,8 @@ export class MemoDTO {
     memo: string;
 
     userId: string;
+
+    writerName: string;
 }
 
 export const MemoSchema = SchemaFactory.createForClass(Memo);

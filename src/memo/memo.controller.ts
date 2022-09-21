@@ -19,6 +19,7 @@ export class MemoController {
 
         memo.memoId = uuid();
         memo.userId = session.user.userId.toString();
+        memo.writerName = session.user.userName;
         const isUserExist = await this.userService.getUserByUserId(memo.userId);
 
         if (!isUserExist) {

@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Post, Get, Param } from '@nestjs/common';
-import { User } from './user.schema';
+import { BadRequestException, Body, Controller, Post, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
+import { User, UserDTO } from './user.schema';
 import { UserService } from './user.service';
 import * as md5 from 'md5';
 
@@ -8,7 +8,8 @@ export class UserController {
     constructor(private userService: UserService) {}
 
     @Post()
-    async createUser(@Body() user: User): Promise<User> {
+    @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true, }))
+    async createUser(@Body() user: UserDTO): Promise<User> {
         const exists = await this.userService.getUser(user.loginId);
 
         if (exists) {

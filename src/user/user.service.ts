@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './user.schema';
+import { User, UserDTO } from './user.schema';
 import * as md5 from 'md5';
 import { v4 as uuid } from 'uuid';
 
@@ -29,7 +29,7 @@ export class UserService {
         }
     }
 
-    async addUser(user: User): Promise<User> {
+    async addUser(user: UserDTO): Promise<User> {
         user.userId = uuid();
         user.password = md5(user.password);
         return await this.userModel.create(user);

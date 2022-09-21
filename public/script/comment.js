@@ -5,15 +5,23 @@ function listComment(memoId) {
         .then(commentList => {
             commentList.forEach(comment => {
                 wrapper.append(htmlToElement(`
-                    <a href="#" class="list-group-item list-group-item-action" aria-current="true" onClick="return false;">
+                    <div class="list-group-item list-group-item-action" aria-current="true">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">${comment.writerName}</h5>
                             <small>${timeForToday(comment.createdAt)}</small>
                         </div>
-                        <p class="mb-1">${comment.comment}</p>
-                        <small class="text-decoration-underline" onClick="editMode(true)">edit</small>
-                        <small class="text-decoration-underline text-danger" onClick="delComment('${comment.commentId}')">delete</small>
-                    </a>
+                        <div id="viewMode">
+                            <p class="mb-1">${comment.comment}</p>
+                            <a href="#" class="text-decoration-underline" onClick="editMode(true, this)">수정</a>
+                            <a href="#" class="text-decoration-underline text-danger" onClick="delComment('${comment.commentId}')">삭제</a>
+                        </div>
+                        <div id="editMode" class="d-none">
+                            <input type="hidden" id="commentId" name="commentId" value="${comment.commentId}"/>
+                            <input type="text" class="form-control" id="comment" name="comment" placeholder="댓글을 입력하세요" value="${comment.comment}"/>
+                            <a href="#" class="text-decoration-underline" onClick="editComment(this)">저장</a>
+                            <a href="#" class="text-decoration-underline text-danger" onClick="editMode(false, this)">취소</a>
+                        </div>
+                    </div>
                 `))
             });
         })
@@ -31,17 +39,33 @@ function addComment() {
         });
 }
 
-function editMode(isEditMode) {
-
+function editMode(isEditMode, obj) {
+    const parent = obj.closest(".list-group-item");
+    if (isEditMode) {
+        parent.querySelector("#viewMode").classList.add('d-none');
+        parent.querySelector("#editMode").classList.remove('d-none');
+    } else {
+        parent.querySelector("#viewMode").classList.remove('d-none');
+        parent.querySelector("#editMode").classList.add('d-none');
+    }
 }
 
-function editComment(commentId) {
+function editComment(obj) {
+    const parent = obj.closest(".list-group-item");
     const params = {
-
+        commentId: parent.querySelector("#editMode #commentId").value,
+        comment: parent.querySelector("#editMode #comment").value
     };
-    fetchToAPI(`/comment/${commentId}`, 'PUT', params);
+    const memoId = document.querySelector("#viewModal #memoId").value;
+    
+    fetchToAPI(`/comment/${params.commentId}`, 'PUT', params)
+        .then(() => editMode(false, obj))
+        .then(() => listComment(memoId));
 }
 
 function delComment(commentId) {
-    fetchToAPI(`/comment/${commentId}`, 'DELETE');
+    const memoId = document.querySelector("#viewModal #memoId").value;
+    
+    fetchToAPI(`/comment/${commentId}`, 'DELETE')
+        .then(() => listComment(memoId));
 }

@@ -1,14 +1,13 @@
 import { BadRequestException, Body, Controller, Post, Get, Put, Delete, Param, UsePipes, ValidationPipe, Session } from '@nestjs/common';
 import { UpdateWriteOpResult } from 'mongoose';
 import { User } from 'src/user/user.schema';
-import { UserService } from 'src/user/user.service';
 import { Memo, MemoDTO } from './memo.schema';
 import { MemoService } from './memo.service';
 import { v4 as uuid } from 'uuid';
 
 @Controller('memo')
 export class MemoController {
-    constructor(private memoService: MemoService, private userService: UserService) {}
+    constructor(private memoService: MemoService) {}
 
     @Post()
     @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true, }))
@@ -19,13 +18,8 @@ export class MemoController {
 
         memo.memoId = uuid();
         memo.userId = session.user.userId.toString();
-        const isUserExist = await this.userService.getUserByUserId(memo.userId);
-
-        if (!isUserExist) {
-            throw new BadRequestException('사용자 정보가 존재하지 않습니다.');
-        } else {
-            return await this.memoService.addMemo(memo);
-        }
+            
+        return await this.memoService.addMemo(memo);
     }
 
     @Get('/list/:pageId/:listCnt')
@@ -44,7 +38,7 @@ export class MemoController {
         if (!session.user) {
             throw new BadRequestException('세션이 만료되었습니다.');
         }
-        
+
         const memo = await this.memoService.getMemo(params.memoId);
 
         if (!memo) {

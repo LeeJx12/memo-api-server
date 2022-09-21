@@ -6,7 +6,7 @@ import { Memo, MemoSchema } from './memo.schema';
 import { MemoService } from './memo.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{name: Memo.name, schema: MemoSchema}]), UserModule],
+  imports: [MongooseModule.forFeature([{name: Memo.name, schema: MemoSchema}])],
   controllers: [MemoController],
   providers: [MemoService],
   exports: [MemoService]

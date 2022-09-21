@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, UpdateWriteOpResult } from 'mongoose';
 import { Memo, MemoDTO } from './memo.schema';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class MemoService {
@@ -36,8 +35,6 @@ export class MemoService {
         const session = await this.connection.startSession();
 
         try {
-            memo.memoId = uuid();
-            
             session.startTransaction();
             const response = await this.memoModel.create(memo);
             await session.commitTransaction();

@@ -32,6 +32,11 @@ export class UserController {
         }
     }
 
+    @Get('/session')
+    getSessionUser(@Session() session: { user?: User }): User {
+        return session.user;
+    }
+
     @Post('/login')
     async login(@Body() user: User, @Session() session: { user?: User }, @Res() res: Response): Promise<void> {
         const exists = await this.userService.getUser(user.loginId);

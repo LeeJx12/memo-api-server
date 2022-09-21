@@ -25,6 +25,7 @@ export class CommentController {
 
         comment.commentId = uuid();
         comment.userId = session.user.userId.toString();
+        comment.writerName = session.user.userName;
 
         return await this.commentService.addComment(comment);
     }

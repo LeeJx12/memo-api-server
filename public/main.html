@@ -3,5 +3,32 @@
         <title>메모</title>
     </head>
     <body>
+        <div class="list">
+            <ul>
+
+            </ul>
+        </div>
+        <div class="write">
+            <input type="text" id="title"/>
+            <textarea id="memo"></textarea>
+            <button type="button" onClick="saveMemo()">저장</button>
+        </div>
+        <div class="view">
+            
+        </div>
+        <div class="edit">
+            <input type="hidden" id="memoId"/>
+            <input type="hidden" id="userId"/>
+            <input type="text" id="title"/>
+            <textarea id="memo"></textarea>
+            <button type="button" onClick="editMemo()">저장</button>
+        </div>
+        <script src="script/common.js"></script>
+        <script src="script/memo.js"></script>
+        <script>
+            var _pageId = 1;
+            var _listCnt = 10;
+            init();
+        </script>
     </body>
 </html>

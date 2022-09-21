@@ -27,6 +27,10 @@ export class Comment extends Document {
     @IsString()
     @IsNotEmpty()
     comment: string;
+
+    @Prop()
+    @IsString()
+    writerName: string;
 }
 
 export class CommentDTO {
@@ -41,6 +45,8 @@ export class CommentDTO {
     @IsString()
     @IsNotEmpty()
     comment: string;
+
+    writerName: string;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { MemoModule } from './memo/memo.module';
 import { SessionModule } from 'nestjs-session';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SessionModule } from 'nestjs-session';
     }),
     UserModule,
     MemoModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

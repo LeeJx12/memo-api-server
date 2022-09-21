@@ -18,17 +18,26 @@ function search(pageId, listCnt) {
                 const li = htmlToElement(html);
                 li.addEventListener('click', e => viewMemo(memo.memoId));
                 ul.append(li);
-            })
+            });
+
+            if (memoList.length === 0) {
+                ul.append(htmlToElement(`<h4>등록된 메모가 없습니다.</h4>`))
+            }
         })
 }
 
 function saveMemo() {
     const params = {
-        title: document.querySelector(".write #title").value,
-        memo: document.querySelector(".write #memo").value
+        title: document.querySelector("#writeModal #title").value,
+        memo: document.querySelector("#writeModal #memo").value
     };
     fetchToAPI('/memo', 'POST', params)
-        .then(() => search(_pageId, _listCnt));
+        .then(() => search(_pageId, _listCnt))
+        .then(() => {
+            document.querySelector("#writeModal #title").value = '';
+            document.querySelector("#writeModal #memo").value = '';
+            document.querySelector("#closeWriteModal").click();
+        });
 }
 
 function editMemo() {

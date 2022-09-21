@@ -30,8 +30,6 @@ export class Memo extends Document {
 }
 
 export class MemoDTO {
-    @IsString()
-    @IsNotEmpty()
     memoId: Types.ObjectId;
 
     @IsString()
@@ -42,8 +40,6 @@ export class MemoDTO {
     @IsNotEmpty()
     memo: string;
 
-    @IsString()
-    @IsNotEmpty()
     userId: string;
 }
 
